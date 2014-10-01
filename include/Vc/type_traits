@@ -1,0 +1,95 @@
+/*  This file is part of the Vc library. {{{
+
+    Copyright (C) 2013 Matthias Kretz <kretz@kde.org>
+
+    Vc is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+
+    Vc is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with Vc.  If not, see <http://www.gnu.org/licenses/>.
+
+}}}*/
+
+#ifndef VC_INCLUDE_VC_TYPE_TRAITS
+#define VC_INCLUDE_VC_TYPE_TRAITS
+
+#include <type_traits>
+
+#include "common/macros.h"
+Vc_PUBLIC_NAMESPACE_BEGIN
+
+template<typename T>
+struct is_simd_mask : public std::integral_constant<bool,
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  float_m>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, double_m>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,    int_m>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,   uint_m>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  short_m>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, ushort_m>::value>
+    {};
+
+template<typename T>
+struct is_simd_vector : public std::integral_constant<bool,
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  float_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, double_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,    int_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,   uint_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  short_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, ushort_v>::value>
+    {};
+
+template<typename T>
+struct memory_alignment : public std::integral_constant<size_t, alignof(T)> {};
+
+template<> struct memory_alignment<short_v> : public std::integral_constant<size_t, short_v::MemoryAlignment> {};
+template<> struct memory_alignment<ushort_v> : public std::integral_constant<size_t, ushort_v::MemoryAlignment> {};
+
+template<typename T>
+struct is_integral : public std::integral_constant<bool,
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,    int_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,   uint_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  short_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, ushort_v>::value ||
+    std::is_integral<T>::value>
+    {};
+
+template<typename T>
+struct is_floating_point : public std::integral_constant<bool,
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  float_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, double_v>::value ||
+    std::is_floating_point<T>::value>
+    {};
+
+template<typename T>
+struct is_arithmetic : public std::integral_constant<bool,
+    is_floating_point<T>::value ||
+    is_integral<T>::value>
+    {};
+
+template<typename T>
+struct is_signed : public std::integral_constant<bool,
+    is_floating_point<T>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,    int_v>::value ||
+    std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type,  short_v>::value ||
+    std::is_signed<T>::value>
+    {};
+
+template<typename T>
+struct is_unsigned : public std::integral_constant<bool,
+    is_arithmetic<T>::value && !is_signed<T>::value>
+    {};
+
+Vc_NAMESPACE_END
+
+#include "common/undomacros.h"
+
+#endif // VC_INCLUDE_VC_TYPE_TRAITS
+
+// vim: ft=cpp
