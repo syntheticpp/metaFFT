@@ -12,36 +12,6 @@ typedef double float_type;
 #include <metaFFT/radix2_ctran.h>
 
 
-#define PI 3.1415926535897932384626433832795028841971693993751058209
-
-double impulse_error(const Data& d, int sign)
-{
-    long double delta_sum = 0;
-    long double sum = 0;
-
-    for(int i = 0; i < d.N; i ++) {
-        long double re;
-        long double im;
-        const long double phi = 2 * PI * (long double)i / (long double)d.N;
-        if(sign == -1) {
-            re = cosl(phi);
-            im = -sinl(phi);
-        } else {
-            re = cosl(phi);
-            im = sinl(phi);
-        }
-        sum += re * re + im * im;
-
-        re = re - d.out[2*i];
-        im = im - d.out[2*i+1];
-
-        delta_sum += re * re + im * im;
-    }
-
-    return sqrtl(delta_sum) / sqrtl(sum);
-}
-
-
 template<int Sign, typename Transform, typename Cleanup>
 void test(int N, const char* name, Transform transform, Cleanup cleanup)
 {
@@ -61,7 +31,7 @@ void test(int N, const char* name, Transform transform, Cleanup cleanup)
 template<int Sign, typename Func>
 void test(int N, const char* name)
 {
-     test<Sign>(N, name, metaFFT_transform<Func, Sign>, &metaFFT_clean);
+     test<Sign>(N, name, metaFFT_transform<Func, Sign, Allocator<float_type>>, &metaFFT_clean<Allocator<float_type>>);
 }
 
 
@@ -123,10 +93,11 @@ int main(int, char *[])
     test< 128>();
     test< 256>();
 
-#if 0
+#if 0 || defined(LARGE_FFTS)
     test< 512>();
     test<1024>();
     test<2048>();
+    test<2048*2>();
 #endif
 
     return 0;

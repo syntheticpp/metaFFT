@@ -22,17 +22,33 @@ void initData(Data* d)
     for(int i = 0; i < d->N; i++) {
         d->in[2*i]   = 0.0;
         d->in[2*i+1] = 0.0;
+        d->out[2*i]   = 0.0;
+        d->out[2*i+1] = 0.0;
     }
     d->in[2] = 1.0;
 }
 
+template<class T>
+struct Allocator
+{
+    T* alloc(int n);
+    void free(T*);
+};
 
 
-template<typename Func, int Sign>
+template<>
+struct Allocator<double>
+{
+    static double* alloc(int n) { return new double[n]; }
+    static void free(double* ptr) { delete [] ptr; }
+};
+
+
+template<typename Func, int Sign, class Alloc>
 nsec_t metaFFT_transform(Data* d)
 {
     if (d->in == 0) {
-        d->in = new double[d->N * 2];
+        d->in = Alloc::alloc(d->N * 2);
         d->out = d->in;
         initData(d);
     }
@@ -45,9 +61,29 @@ nsec_t metaFFT_transform(Data* d)
 }
 
 
+template<typename Func, int Sign, class Alloc>
+nsec_t metaFFT_transformOut(Data* d)
+{
+    if (d->in == 0) {
+        d->in = Alloc::alloc(d->N * 2);
+        d->out = Alloc::alloc(d->N * 2);
+        initData(d);
+    }
+
+    const nsec_t t0 = nsec_clock();
+    std::complex<float_type>* in = (std::complex<float_type>*)d->in;
+    std::complex<float_type>* out = (std::complex<float_type>*)d->out;
+    Sign == -1 ? Func::forward(in, out) : Func::backward(in, out);
+    const nsec_t dt = nsec_clock() - t0;
+    return dt;
+}
+
+template<class Alloc>
 void metaFFT_clean(Data* d)
 {
-    delete [] d->in;
+    if (d->in != d->out)
+        Alloc::free(d->out);
+    Alloc::free(d->in);
 }
 
 
@@ -96,3 +132,32 @@ double bench(int N, const char* msg, int runs, Transform transform, Cleanup clea
     return gigaflops;
 }
 
+
+#define PI 3.1415926535897932384626433832795028841971693993751058209
+
+double impulse_error(const Data& d, int sign)
+{
+    long double delta_sum = 0;
+    long double sum = 0;
+
+    for(int i = 0; i < d.N; i ++) {
+        long double re;
+        long double im;
+        const long double phi = 2 * PI * (long double)i / (long double)d.N;
+        if(sign == -1) {
+            re = cosl(phi);
+            im = -sinl(phi);
+        } else {
+            re = cosl(phi);
+            im = sinl(phi);
+        }
+        sum += re * re + im * im;
+
+        re = re - d.out[2*i];
+        im = im - d.out[2*i+1];
+
+        delta_sum += re * re + im * im;
+    }
+
+    return sqrtl(delta_sum) / sqrtl(sum);
+}

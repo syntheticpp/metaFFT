@@ -1,4 +1,11 @@
+/*
+ * Copyright (C) 2014 Peter Kümmel. All rights reserved.
+ *
+ * This file is part of metaFFT, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 #pragma once
+
 
 namespace metaFFT
 {

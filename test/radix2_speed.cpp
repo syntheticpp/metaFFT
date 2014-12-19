@@ -13,7 +13,7 @@ template<typename Func>
 void compare(int N, const char* name, int runs, double fftw_flops)
 {
     int nsec;
-    double ct = bench(N, name, runs, metaFFT_transform<Func, -1>, &metaFFT_clean, nsec);
+    double ct = bench(N, name, runs, metaFFT_transform<Func, -1, Allocator<float_type>>, &metaFFT_clean<Allocator<float_type>>, nsec);
     printf("N = 2^%2.0f = %5i: %5i nsec, speed %s = %5.2f GFLOPS  FFTW/metaFFT = %4.1f\n", log2(N), N, nsec, name, ct, fftw_flops / ct);
 }
 
@@ -67,10 +67,11 @@ int main(int, char *[])
     compare<128>();
     compare<256>();
 
-#if 0
+#if 0 || defined(LARGE_FFTS)
     compare<512>();
     compare<1024>();
     compare<2048>();
+    compare<2048*2>();
 #endif
 
     return 0;

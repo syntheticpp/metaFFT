@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2014 Peter Kümmel. All rights reserved.
+ *
+ * This file is part of metaFFT, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 #pragma once
 
 #include "math.h"
@@ -82,7 +88,7 @@ namespace metaFFT
                     {
                         static void steps(V* d)
                         {
-                            const C p = metaFFT::polar<K, N, C, Sign == -1>();
+                            constexpr C p = metaFFT::polar<K, N, C, Sign == -1>();
                             const V tr = d[K+N]*p.real() - d[K+N+1]*p.imag();
                             const V ti = d[K+N]*p.imag() + d[K+N+1]*p.real();
                             d[K+N]   = d[K]   - tr;
