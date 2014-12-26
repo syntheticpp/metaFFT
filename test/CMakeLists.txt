@@ -45,9 +45,10 @@ endmacro()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 file(GLOB headers ${CMAKE_SOURCE_DIR}/include/metaFFT/*.h)
+file(GLOB_RECURSE simdpp ${CMAKE_SOURCE_DIR}/include/simdpp/*.h)
 file(GLOB helpers ${CMAKE_SOURCE_DIR}/test/*.h)
 
-list(APPEND headers ${helpers})
+list(APPEND headers ${helpers} ${simdpp})
 
 test(radix2_precision .cpp ${headers})
 test(radix2_sse2_precision .cpp ${headers})
@@ -58,4 +59,5 @@ if(fftw)
     test(radix2_speed .cpp ${headers})
     test(radix2_sse2_speed .cpp ${headers})
     test(split_radix_speed .cpp ${headers})
+    test(split_radix_avx_speed .cpp ${headers})
 endif()
