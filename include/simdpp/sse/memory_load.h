@@ -118,7 +118,7 @@ void load_lane(float32x4& a, const void* p)
 }
 
 template<unsigned P, unsigned N> SIMDPP_INL
-void load_lane(float64x2& a, const void* p)
+void load_lane(float64x2& a, const float64x2::element_type* p)
 {
     static_assert(N==1, "Size not supported");
     static_assert(P==0 || P==1, "Position not supported");

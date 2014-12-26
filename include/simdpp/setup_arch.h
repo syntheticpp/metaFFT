@@ -367,7 +367,10 @@
 
 #define SIMDPP_ARCH_NAMESPACE SIMDPP_PP_ARCH_CONCAT13
 
-
+namespace simdpp {
+namespace SIMDPP_ARCH_NAMESPACE {}
+namespace arch = SIMDPP_ARCH_NAMESPACE;
+}
 
 /** @def SIMDPP_ARCH_NAME
     Usable in contexts where a string is required
