@@ -13,7 +13,7 @@ namespace metaFFT
     {
         namespace out_place
         {
-            template<unsigned N, typename C, int Stride, template<int, unsigned, class> class butterfly_policy>
+            template<unsigned N, typename C, int Stride, template<int, unsigned, class, bool> class butterfly_policy>
             struct split_radix
             {
                 template<int Sign>
@@ -26,13 +26,13 @@ namespace metaFFT
                     odd::template calc<Sign>(in+Stride, out+N/2);
                     odd::template calc<Sign>(in+3*Stride, out+3*N/4);
 
-                    butterfly_policy<Sign, N, C>::loop(out);
+                    butterfly_policy<Sign, N, C, Stride == 1>::loop(out);
                 }
             };
 
 
             // fft split-radix
-            template<unsigned N, typename C, template<int, unsigned, class> class butterfly_policy>
+            template<unsigned N, typename C, template<int, unsigned, class, bool> class butterfly_policy>
             struct fft
             {
                 static void backward(C* in, C* out)

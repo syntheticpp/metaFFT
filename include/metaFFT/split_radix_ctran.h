@@ -18,7 +18,7 @@ namespace metaFFT
             namespace unrolled_loop
             {
 
-                template<int Sign, unsigned N, class C>
+                template<int Sign, unsigned N, class C, bool Unpack = false>
                 struct butterfly_policy
                 {
                     typedef typename C::value_type V;

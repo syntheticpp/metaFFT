@@ -101,14 +101,16 @@ void compare()
 
 int main(int, char *[])
 {
-    compare<  4>();
+#if 0
+    compare<  512>();
+#else
     compare<  8>();
     compare< 16>();
     compare< 32>();
     compare< 64>();
     compare<128>();
     compare<256>();
-
+#endif
 #if 0 || defined(LARGE_FFTS)
     compare<512>();
     compare<1024>();

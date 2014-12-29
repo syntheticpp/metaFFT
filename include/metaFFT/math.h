@@ -16,6 +16,10 @@
 namespace metaFFT
 {
 
+    struct Complex {
+        double r;
+        double i;
+    };
 
 #ifdef METAFFT_HAVE_CONSTEXPR
 

@@ -18,7 +18,7 @@ namespace metaFFT
 
             namespace loop
             {
-                template<int Sign, unsigned N, class C>
+                template<int Sign, unsigned N, class C, bool Unpack = false>
                 struct butterfly_policy
                 {
                     static void loop(C* out)
@@ -61,7 +61,7 @@ namespace metaFFT
 
             namespace unrolled_loop
             {
-                template<int Sign, unsigned N, class C>
+                template<int Sign, unsigned N, class C, bool = false>
                 struct butterfly_policy
                 {
                     template<unsigned K, unsigned End>
@@ -85,7 +85,7 @@ namespace metaFFT
                             out[K+N/2]   = Uk  -       (w1Zk+w3Zdk);
                             out[K+N/4]   = Uk2 - dir*i*(w1Zk-w3Zdk);
                             out[K+3*N/4] = Uk2 + dir*i*(w1Zk-w3Zdk);
-            
+
                             remaining<K+1, End>::steps(out);
                         }
 
@@ -95,7 +95,7 @@ namespace metaFFT
                     struct remaining<End, End>
                     {
                         static void steps(C*)
-                        {} 
+                        {}
                     };
 
 
@@ -106,7 +106,7 @@ namespace metaFFT
 
                 };
             }
-                
+
 
 
 
