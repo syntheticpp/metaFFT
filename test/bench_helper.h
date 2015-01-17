@@ -11,8 +11,8 @@
 struct Data
 {
     int N;
-    double* in;
-    double* out;
+    float* in;
+    float* out;
     void* plan;
 };
 
@@ -37,10 +37,10 @@ struct Allocator
 
 
 template<>
-struct Allocator<double>
+struct Allocator<float>
 {
-    static double* alloc(int n) { return new double[n]; }
-    static void free(double* ptr) { delete [] ptr; }
+    static float* alloc(int n) { return new float[n]; }
+    static void free(float* ptr) { delete [] ptr; }
 };
 
 

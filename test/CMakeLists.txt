@@ -1,7 +1,7 @@
 
 
 find_path(FFTW_INCLUDES fftw3.h PATHS ${fftwdir})
-find_library(FFTW_LIBRARIES NAMES fftw3 libfftw3-3 PATHS ${fftwdir})
+find_library(FFTW_LIBRARIES NAMES fftw3f libfftw3f-3 PATHS ${fftwdir})
 if(FFTW_INCLUDES AND FFTW_LIBRARIES)
     set(fftw 1)
     message(STATUS "FFTW found: ${FFTW_INCLUDES}")
